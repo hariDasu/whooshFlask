@@ -1,0 +1,257 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}IS634 - Whoosh{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+        <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">IS 634 - Whoosh</a>
+        </div>
+
+        </div>
+    </nav>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        console.log('hello');
+        $('#submitQuery').click(function(){
+            var query1='coping with overcrowded prisons'
+            var query2='oil spills'
+            var query3='Insurance Coverage which pays for Long Term Care'
+            var userQuery = ($('#userQuery').val())
+            var retModel = ($('input[name="optionsRadios"]:checked').filter(':checked').val())
+            var qExpansion= ($('input[name="optionsRadios2"]:checked').filter(':checked').val())
+            var nUrl = '/seekInfo?retModel='+retModel+'&qExpansion='+qExpansion+'&uQuery='+userQuery 
+            console.log(nUrl);
+            $.ajax(
+                {
+                 url:nUrl,
+                 cache:false,
+                 success:function(data){
+                    x=$.parseJSON(data)
+                    console.log(x)
+                    res=""
+                    exps=""
+                    doyoumean=""
+                    for (theTitle in x){
+                        if(theTitle=='suggestions' && userQuery!=x[theTitle]){
+                            console.log(userQuery + "and " + x[theTitle])
+                            doyoumean+='Did you mean: <b>'+x[theTitle]+'</b>'
+                        }
+                        else if(theTitle=='suggestions' && userQuery==x[theTitle]){
+                            console.log(userQuery + " and " + x[theTitle])
+                            doyoumean+=''
+                        }
+                        else if(theTitle=='expTerms'){
+                            exps+='<h4>Suggested Queries</h4>'+x[theTitle]+'</br>'
+                        }
+                        else if (theTitle=='numResults'){
+                            doyoumean+='     Total Results: '+x[theTitle]
+                        }
+                        else res+='<h4>'+theTitle+'</h4>'+x[theTitle]+'<hr></br>'
+                        
+                    }
+                    $('#suggest').html(doyoumean)
+                    $('#results').html(res);
+                    $('#expansion').html(exps);
+
+                 }
+                }   
+                )   
+            });
+
+        $('#topics').click(function(){
+            var nVal= ($("#topics option:selected").text())
+            var query1='coping with overcrowded prisons'
+            var int1=151;
+            var query2='oil spills'
+            var int2=154
+            var int4=152;
+            var query4="Accusations of Cheating by Contractors on U.S. Defense Projects"
+            var query3='Insurance Coverage which pays for Long Term Care'
+            var int3=153
+            var userQuery = ($('#userQuery').val())
+            if(userQuery==query1){
+                topic=int1
+            }else if(userQuery==query2){
+                topic=int2
+            }else if(userQuery==query3){
+                topic=int3
+            }else if(userQuery==query4){
+                topic=int4
+            }else return false
+            var sUrl = '/seekTopic?topic='+topic+'&nVal='+nVal;
+            console.log(sUrl);
+            $.ajax(
+                {
+                 url:sUrl,
+                 cache:false,
+                 success:function(data){
+                    x=$.parseJSON(data)
+                    console.log(x)
+                        precision=x[0]
+                        recall=x[1]
+                        fRate=x[2]
+                    $('#precisionVal').html(precision);
+                    $('#recallVal').html(recall);
+                    $('#fVal').html(fRate);
+                 }
+                }   
+                )   
+            });
+
+
+        $('.qExps').click(function(){
+            var selTopic= ($("#topics option:selected").text())
+            var qExpansion= ($('input[name="optionsRadios2"]:checked').filter(':checked').val())
+            var qUrl = '/expType?exp='+qExpansion;
+            console.log(qUrl);
+            $.ajax(
+                {
+                 url:Url,
+                 cache:false,
+                 success:function(data){
+                    x=$.parseJSON(data)
+                    console.log(x)
+                        precision=x[0]
+                        recall=x[1]
+                        fRate=x[2]
+                    $('#precisionVal').html(precision);
+                    $('#recallVal').html(recall);
+                    $('#fVal').html(fRate);
+                 }
+                }   
+                )   
+            });
+        });
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+
+</br></br></br>
+<style>
+    div#results{height:400px;overflow:scroll;}
+</style>
+<div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2">
+        <div class="well">
+        <h4>Retrieval Model</h4>
+        <form id="radio1">
+            <div class="radio">
+              <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="BM25F" checked>
+            BM-25F
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios2" value="TFIDF">
+            TF-IDF
+          </label>
+        </div>
+
+        <div class="radio">
+          <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios3" value="termFreq">
+            Term Frequency
+          </label>
+        </div>
+        </form>
+
+</br>
+        <h4>Query Expansion</h4>
+        
+            <div class="radio">
+              <label>
+            <input type="radio"  name="optionsRadios2" id="optionStats1" value="noExp" checked>
+            No Expansion 
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" class="qExps" name="optionsRadios2" id="optionStats2" value="mim">
+            MIM
+          </label>
+        </div>
+
+        <div class="radio">
+          <label>
+            <input type="radio" class="qExps" name="optionsRadios2" id="optionStats3" value="eMim">
+            EMIM
+          </label>
+        </div>
+
+        <div class="radio">
+          <label>
+            <input type="radio" class="qExps"  name="optionsRadios2" id="optionStats4" value="chiSquare">
+            Chi<sup>2</sup>
+          </label>
+        </div>
+
+
+        <div class="radio">
+          <label>
+            <input type="radio" class="qExps" name="optionsRadios2" id="optionStats5" value="dices">
+            Dice's
+          </label>
+        </div>
+        </div>
+        </div>
+        
+        <div class="col-lg-7  col-md-7  main pull-left">
+      <div class="col-lg-6">
+        <div class="input-group">
+          <input id="userQuery" type="text" class="form-control">
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="submitQuery" type="button">Go</button>
+          </span>
+        </div><!-- /input-group -->
+
+            <h4>Search Results</h4>
+            <div id="suggest">
+
+            </div>
+            <div id="results">
+                
+
+
+            </div>
+            <div id="expansion">
+
+            </div>
+      </div><!-- /.col-lg-6 -->
+
+
+    </div>
+        <div class="col-sm-2">
+        <div class="well">
+            Evaluation at Topic
+            <select class="form-control" id="topics">
+              <option id="50">50</option>
+              <option id="100">100</option>
+              <option id="150">150</option>
+              <option id="200">200</option>
+            </select> Results
+
+            </br>
+            <h6>Precision: <span class="label label-info" id="precisionVal"></span></h6>
+            <h6>Recall: <span class="label label-info" id="recallVal"></span></h6>
+            <h6>F-rate: <span class="label label-info" id="fVal"></span></h6>
+        </div>
+        </div>
+
+
+    </div>
+        </div>
+{% endblock %}
