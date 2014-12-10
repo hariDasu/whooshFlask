@@ -122,15 +122,18 @@ class InfoSeeker(object) :
         sortedTerms=sorted(wordScores, key=wordScores.get, reverse=True)
         i=0
 
-        res=""
+        res="<table class='table table-bordered'><tr>"
         for oneTerm in sortedTerms :
             if oneTerm == queryTerm :
                 continue
-            res+=(queryTerm+ ":"+oneTerm  + "<br>")
+            res+=("<td>"+queryTerm+ " "+"<b>"+oneTerm+"</b></td>")
             i+=1
+            if i%5==0 and i%10!=0 :
+                res+="</tr><tr>"
             if i == 10 :
+                res+="</tr>"
                 break
-        res+="<HR>"
+        res+="</table>"
         return res
     #----------------------------
     def bestWords2(self, scores ):

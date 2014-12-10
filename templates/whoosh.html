@@ -3,17 +3,19 @@
 
 {% block navbar %}
     <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-        <div class="container">
+        <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">IS 634 - Whoosh</a>
-        </div>
+          <a class="navbar-brand" href="http://whoosh.srihari.guru:5000">IS 634 - Whoosh</a>
 
+        </div>
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    </div><!-- /.navbar-collapse -->
         </div>
     </nav>
 
@@ -41,11 +43,14 @@
                     exps=""
                     doyoumean=""
                     for (theTitle in x){
-                        if(theTitle=='suggestions' && userQuery!=x[theTitle]){
-                            console.log(userQuery + "and " + x[theTitle])
+                        //var wordList=parsedQuery.split(/\s+/);
+                        //console.log(wordList);
+                        var splitQuery = userQuery.split(/\s+/)
+                        if(theTitle=='suggestions' && splitQuery!=x[theTitle].split(/\s+/)){
+                            console.log(splitQuery + " and " + x[theTitle].split(/\s+/))
                             doyoumean+='Did you mean: <b>'+x[theTitle]+'</b>'
                         }
-                        else if(theTitle=='suggestions' && userQuery==x[theTitle]){
+                        else if(theTitle=='suggestions' && splitQuery==x[theTitle].split(/\s+/)){
                             console.log(userQuery + " and " + x[theTitle])
                             doyoumean+=''
                         }
@@ -77,6 +82,17 @@
             var query4="Accusations of Cheating by Contractors on U.S. Defense Projects"
             var query3='Insurance Coverage which pays for Long Term Care'
             var int3=153
+            var query5="Right Wing Christian Fundamentalism in U.S."
+            var int5=155
+            var query6="Efforts to enact Gun Control Legislation"
+            var int6=156
+            var query7="Causes and treatments of multiple sclerosis"
+            var int7=157
+            var query8="Term limitations for members of the U.S. Congress"
+            var int8=158
+            var query9="electric car development"
+            var int9=159
+
             var userQuery = ($('#userQuery').val())
             if(userQuery==query1){
                 topic=int1
@@ -86,6 +102,16 @@
                 topic=int3
             }else if(userQuery==query4){
                 topic=int4
+            }else if(userQuery==query5){
+                topic=int5
+            }else if(userQuery==query6){
+                topic=int6
+            }else if(userQuery==query7){
+                topic=int7
+            }else if(userQuery==query8){
+                topic=int8
+            }else if(userQuery==query9){
+                topic=int9
             }else return false
             var sUrl = '/seekTopic?topic='+topic+'&nVal='+nVal;
             console.log(sUrl);
@@ -144,7 +170,7 @@
 </style>
 <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-3 col-md-3 col-lg-3">
         <div class="well">
         <h4>Retrieval Model</h4>
         <form id="radio1">
@@ -206,10 +232,24 @@
             Dice's
           </label>
         </div>
+</br>
+
+           <h4> Evaluation at Topic</h4>
+            <select class="form-control" id="topics">
+              <option id="50">50</option>
+              <option id="100">100</option>
+              <option id="150">150</option>
+              <option id="200">200</option>
+            </select> Results
+
+            </br>
+            <h6>Precision: <span class="label label-info" id="precisionVal"></span></h6>
+            <h6>Recall: <span class="label label-info" id="recallVal"></span></h6>
+            <h6>F-rate: <span class="label label-info" id="fVal"></span></h6>
         </div>
         </div>
         
-        <div class="col-lg-7  col-md-7  main pull-left">
+        <div class="col-lg-9  col-md-8 col-sm-9  main pull-left">
       <div class="col-lg-6">
         <div class="input-group">
           <input id="userQuery" type="text" class="form-control">
@@ -234,24 +274,7 @@
 
 
     </div>
-        <div class="col-sm-2">
-        <div class="well">
-            Evaluation at Topic
-            <select class="form-control" id="topics">
-              <option id="50">50</option>
-              <option id="100">100</option>
-              <option id="150">150</option>
-              <option id="200">200</option>
-            </select> Results
-
-            </br>
-            <h6>Precision: <span class="label label-info" id="precisionVal"></span></h6>
-            <h6>Recall: <span class="label label-info" id="recallVal"></span></h6>
-            <h6>F-rate: <span class="label label-info" id="fVal"></span></h6>
-        </div>
-        </div>
-
-
+<!--well was here -->
     </div>
         </div>
 {% endblock %}

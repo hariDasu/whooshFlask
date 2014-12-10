@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from flask import Flask,request
 from flask import request,render_template
 from flask_bootstrap import Bootstrap
